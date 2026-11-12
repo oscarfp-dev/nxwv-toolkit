@@ -1,0 +1,18 @@
+# Every tool runs against every URL, in the order listed.
+# example.com is used only to demonstrate execution, not as an Intellian device.
+[targets]
+urls = ["https://example.com"]
+
+[pipeline]
+tools = ["intellian_oneweb.health"]
+
+# Optional shared authentication:
+# [auth]
+# type = "basic"
+# username = "admin"
+# password_env = "ANTENNA_PASSWORD"
+#
+# Or:
+# [auth]
+# type = "bearer"
+# token_env = "ANTENNA_TOKEN"
