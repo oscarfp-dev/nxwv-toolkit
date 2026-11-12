@@ -4,15 +4,27 @@ import httpx
 import pytest
 
 from core import HttpClient
-from mcp_server.server import make_handler, mcp
+from mcp_server.server import mcp
 from toolkits import TOOLS
 from toolkits.intellian_oneweb.health import health
+from toolkits.intellian_oneweb.mcp import make_handler
 
 
 @pytest.mark.asyncio
 async def test_mcp_registered_tools() -> None:
     tools = await mcp.list_tools()
-    assert {tool.name for tool in tools} == {name.replace(".", "_") for name in TOOLS}
+    assert {tool.name for tool in tools} == (
+        {name.replace(".", "_") for name in TOOLS}
+        | {
+            "oneweb_api_list_user_terminals",
+            "oneweb_api_get_user_terminal",
+            "oneweb_api_upgrade_status",
+            "oneweb_api_available_installer_bundles",
+            "oneweb_api_reboot_status",
+            "oneweb_api_mute_status",
+            "oneweb_api_performance_report",
+        }
+    )
 
 
 @pytest.mark.asyncio
