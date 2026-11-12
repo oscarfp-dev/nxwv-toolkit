@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "nxwv-toolkit": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--project",
+        ".",
+        "python",
+        "mcp_entry.py"
+      ]
+    }
+  }
+}

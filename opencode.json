@@ -1,0 +1,18 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "nxwv-toolkit": {
+      "type": "local",
+      "command": [
+        "uv",
+        "run",
+        "--project",
+        ".",
+        "python",
+        "mcp_entry.py"
+      ],
+      "enabled": true,
+      "timeout": 30000
+    }
+  }
+}

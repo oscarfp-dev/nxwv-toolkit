@@ -89,42 +89,29 @@ Secrets are read from environment variables. Tools must be explicitly registered
 in `src/toolkits/__init__.py`. A failed request is reported and does not stop
 the remaining operations; the process exits nonzero if any request fails.
 
-## Local MCP for OpenCode and Claude Code
+## Project-local MCP for OpenCode and Claude Code
 
-The same registered tools are exposed over **stdio** through the official Python MCP
-SDK (FastMCP). Both clients start the same entrypoint; no listening port is needed.
-Run `uv sync --locked` once, then configure either client as follows.
+Both clients discover the MCP server configuration directly from this repository:
+`opencode.json` for OpenCode and `.mcp.json` for Claude Code. No global MCP
+registration, absolute machine-specific paths, or listening ports are required.
 
-**OpenCode** — add this MCP server to your existing OpenCode configuration
-(`opencode.json` or your user-level configuration; merge the `mcp` key):
-
-```json
-{
-  "mcp": {
-    "nxwv-toolkit": {
-      "type": "local",
-      "command": [
-        "uv", "run", "--project", "/home/ubuntu/GitHub/nxwv-toolkit",
-        "python", "/home/ubuntu/GitHub/nxwv-toolkit/mcp_entry.py"
-      ],
-      "enabled": true
-    }
-  }
-}
-```
-
-**Claude Code** — run:
+Install Python 3.12+ and [uv](https://docs.astral.sh/uv/), then:
 
 ```bash
-claude mcp add --transport stdio nxwv-toolkit -- \
-  uv run --project /home/ubuntu/GitHub/nxwv-toolkit \
-  python /home/ubuntu/GitHub/nxwv-toolkit/mcp_entry.py
+git clone https://github.com/oscarfp-dev/nxwv-toolkit.git
+cd nxwv-toolkit
+uv sync --locked
+opencode  # or: claude
 ```
 
-Use `claude mcp list` to confirm registration. OpenCode can be checked with
-`opencode mcp list`. Run either client on the **same machine** where the
-project and `uv` are installed. If clients run on another machine, replace
-the absolute path with that machine's local project path.
+Start the client **from the repository root**. Both configurations run
+`uv run --project . python mcp_entry.py` as a local stdio MCP server.
+OpenCode loads project-local `opencode.json`; Claude Code loads project-local
+`.mcp.json` and may prompt for approval of the project's MCP server.
+
+Check discovery using `opencode mcp list` or `claude mcp list`.
+Tools still require network connectivity to the requested device URLs.
+Never commit secrets: pass authentication using environment variables.
 
 The registered MCP tools are `intellian_oneweb_health` and the nine Intellian endpoint tools listed below. Each accepts `url`, plus optional
 `auth_type` (`none`, `basic`, `bearer`), `username` (for Basic),
