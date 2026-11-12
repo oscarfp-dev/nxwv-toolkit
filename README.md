@@ -155,3 +155,29 @@ No port is hardcoded in the tools.
 The original JavaScript configuration does not establish whether every
 endpoint returns exactly the documented JSON shape. Validate mappings against
 real Intellian responses before treating extracted values as verified.
+
+
+## OneWeb API (centralized service)
+
+The `oneweb_api_*` MCP tools connect to the OneWeb service, not to individual
+antennas. Copy `.env.example` to `.env` and configure the three service base
+URLs plus Basic credentials. `mcp_entry.py` loads the local `.env` automatically;
+environment variables already set by the process take precedence.
+
+The toolkit exposes six GET operations (inventory list/detail; upgrade, reboot
+and mute status; available installer bundles) and **one read-only POST**
+(`oneweb_api_performance_report`). The performance report RAML specifies
+`POST /performanceReport` for report retrieval and returns the report in a 201
+response. No terminal-management POST, PUT, PATCH or DELETE is exposed.
+
+OneWeb MCP tools take domain arguments such as `imei`, `fields`, `limit`
+and `offset`; they do **not** accept URL or credentials as tool arguments.
+The performance report accepts a structured `payload` matching one of the
+RAML report configurations (including `reportingTimeframe` and
+`performanceJob`). Each metric has its own required schema; the toolkit
+passes that payload through without inventing values.
+
+The three source RAML ZIP archives are kept locally in `.local/raml/` and
+ignored by Git. No vendor specifications or sample data are committed.
+The example service URLs in `.env.example` are placeholders, not verified
+production endpoints.
