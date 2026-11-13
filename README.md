@@ -191,9 +191,9 @@ selection or schema conversion:
 - `opscenter_api_get_antenna_data(antenna_id)` — `GET /api/v1/antennas/data/{antenna_id}`
 - `opscenter_api_get_antenna_info(antenna_id)` — `GET /api/v1/antennas/info/{antenna_id}`
 
-The default host is `https://poller.opscenter-preprod.viasat.io`;
-override it with `OPSCENTER_BASE_URL` if necessary. Antenna IDs such as
-`Sh2Fl6` are not OneWeb IMEIs. Authentication is a manually managed
+Set the Poller host in `OPSCENTER_BASE_URL` in your local `.env` file.
+The server does not ship with a default host. Antenna IDs are not OneWeb IMEIs.
+Authentication is a manually managed
 application session cookie, **not** an Okta token. The MCP never asks
 the AI client for the cookie and never returns it in tool results.
 

@@ -8,7 +8,6 @@ from typing import Any
 
 import httpx
 
-DEFAULT_BASE_URL = "https://poller.opscenter-preprod.viasat.io"
 DEFAULT_COOKIE_FILE = Path.home() / ".config/nxwv-toolkit/auth/opscenter.cookie"
 
 
@@ -37,7 +36,9 @@ async def request(endpoint: str, antenna_id: str) -> Any:
     if not re.fullmatch(r"[A-Za-z0-9_-]+", antenna_id):
         raise ValueError("antenna_id must contain only letters, numbers, '_' or '-'")
 
-    base_url = os.getenv("OPSCENTER_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
+    base_url = os.getenv("OPSCENTER_BASE_URL", "").strip().rstrip("/")
+    if not base_url:
+        raise ValueError("OPSCENTER_BASE_URL must be configured in the MCP environment")
     if not base_url.startswith("https://"):
         raise ValueError("OPSCENTER_BASE_URL must use HTTPS")
     async with httpx.AsyncClient(base_url=base_url, follow_redirects=False, timeout=20.0) as client:
