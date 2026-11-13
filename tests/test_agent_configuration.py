@@ -49,5 +49,6 @@ def test_both_clients_use_local_mcp_entry() -> None:
 
 async def test_operational_mcp_tool_count() -> None:
     names = {tool.name for tool in await mcp.list_tools()}
-    assert len(names) == 19
+    assert len(names) == 21
     assert {"opscenter_api_get_antenna_data", "opscenter_api_get_antenna_info"} <= names
+    assert {"oneweb_ephemeris_download_ltef", "oneweb_ephemeris_get_ltef_status"} <= names
