@@ -25,6 +25,8 @@ async def test_mcp_registered_tools() -> None:
             "oneweb_api_performance_report",
             "opscenter_api_get_antenna_data",
             "opscenter_api_get_antenna_info",
+            "oneweb_ephemeris_download_ltef",
+            "oneweb_ephemeris_get_ltef_status",
         }
     )
 

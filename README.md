@@ -23,6 +23,15 @@ bearer = HttpClient("https://example.test", auth=BearerAuth("token"))
 Supply credentials at runtime (for example, from environment variables), never in
 source files. TLS verification is enabled by default.
 
+On Ubuntu/WSL with a corporate CA already trusted by the operating system,
+HTTPX may still reject HTTPS because its default `certifi` bundle does not
+include that CA. Set `SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt` in
+the project `.env` to use the Ubuntu CA bundle while keeping TLS verification
+enabled. `mcp_entry.py` loads the project `.env` when OpenCode or Claude
+starts the MCP server; restart the MCP client after changing the setting.
+Do not disable certificate verification with `verify=False`.
+
+
 The client currently creates an HTTPX connection context per request. Connection
 pooling is not implemented yet.
 

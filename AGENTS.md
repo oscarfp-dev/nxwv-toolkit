@@ -11,6 +11,9 @@ as a software developer, repository maintainer, or code-editing agent.
   information, firmware/reboot/mute status, and performance reports.
 - Use `intellian_oneweb_*` for direct, per-device Intellian antenna, modem,
   GNSS, blockage, product, LTE, and health queries.
+- Use `oneweb_ephemeris_download_ltef` to explicitly refresh the local LTEF CSV,
+  and `oneweb_ephemeris_get_ltef_status` to inspect the stored copy without
+  contacting OneWeb. Distinguish download age from source Last-Modified age.
 - Use `opscenter_api_get_antenna_data` for antenna telemetry and
   `opscenter_api_get_antenna_info` for metadata, firmware and blockage zones.
   Both require an OpsCenter antenna ID (not an IMEI or Intellian device URL).
