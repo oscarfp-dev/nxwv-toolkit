@@ -1,12 +1,10 @@
-"""MCP adapter for per-device Intellian HTTP tools."""
+"""Register per-device Intellian HTTP tools with MCP."""
 
-import os
-
-import httpx
 from mcp.server.fastmcp import FastMCP
 
-from core import BasicAuth, BearerAuth, HttpClient, HttpTool
+from core import HttpTool
 
+from .response import request_result
 from .tools import TOOLS
 
 
@@ -18,28 +16,7 @@ def make_handler(tool: HttpTool):
         secret_env: str = "",
     ) -> dict[str, object]:
         """Query a device URL; optionally supply basic/bearer credentials via env."""
-        auth: BasicAuth | BearerAuth | None = None
-        if auth_type != "none":
-            if auth_type not in ("basic", "bearer"):
-                raise ValueError("auth_type must be none, basic, or bearer")
-            if not secret_env:
-                raise ValueError("secret_env is required for authentication")
-            secret = os.environ.get(secret_env)
-            if not secret:
-                raise ValueError(f"Missing environment variable: {secret_env}")
-            if auth_type == "basic":
-                if not username:
-                    raise ValueError("username is required for basic authentication")
-                auth = BasicAuth(username, secret)
-            else:
-                auth = BearerAuth(secret)
-        try:
-            data = await tool.run(HttpClient(url, auth=auth))
-        except httpx.HTTPStatusError as exc:
-            return {"ok": False, "status": exc.response.status_code, "error": str(exc)}
-        except httpx.RequestError as exc:
-            return {"ok": False, "status": None, "error": str(exc)}
-        return {"ok": True, "data": data}
+        return await request_result(tool, url, auth_type, username, secret_env)
 
     return execute
 

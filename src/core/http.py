@@ -44,6 +44,7 @@ class HttpClient:
         params: dict[str, Any] | None = None,
         json: Any = None,
         headers: dict[str, str] | None = None,
+        allow_redirects: bool = False,
     ) -> httpx.Response:
         if isinstance(self.auth, BasicAuth):
             auth: httpx.Auth | None = httpx.BasicAuth(self.auth.username, self.auth.password)
@@ -60,6 +61,7 @@ class HttpClient:
             timeout=self.timeout,
             verify=self.verify,
             transport=self.transport,
+            follow_redirects=False,
         ) as client:
             response = await client.request(
                 method,
@@ -68,5 +70,12 @@ class HttpClient:
                 json=json,
                 headers=request_headers,
             )
+            if not allow_redirects and response.is_redirect:
+                response.raise_for_status()
+                raise httpx.HTTPStatusError(
+                    f"Unexpected HTTP redirect ({response.status_code})",
+                    request=response.request,
+                    response=response,
+                )
             response.raise_for_status()
             return response
