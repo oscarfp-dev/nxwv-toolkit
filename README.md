@@ -57,7 +57,7 @@ Execute the same declaration with any configured HTTP client:
 
 ```python
 from core import HttpClient
-from toolkits.intellian_oneweb.health import health
+from toolkits.intellian_oneweb.tools.health import health
 
 client = HttpClient("https://192.0.2.10")
 data = await health.run(client)
@@ -86,8 +86,39 @@ uv run python main.py inventory.example.toml
 An optional shared `[auth]` section supports `type = "basic"` with
 `username` and `password_env`, or `type = "bearer"` with `token_env`.
 Secrets are read from environment variables. Tools must be explicitly registered
-in `src/toolkits/__init__.py`. A failed request is reported and does not stop
+in `src/toolkits/intellian_oneweb/tools/__init__.py`. A failed request is reported and does not stop
 the remaining operations; the process exits nonzero if any request fails.
+
+## Default operational assistant (OpenCode and Claude Code)
+
+This repository is intended to be **used** as a satellite diagnostics assistant,
+not edited by the assistant during routine operations.
+
+- `AGENTS.md` defines the shared operational role, tool-selection rules,
+  evidence standards, read-only limits, and diagnostic response format.
+- `CLAUDE.md` imports `AGENTS.md` for Claude Code.
+- OpenCode reads `AGENTS.md` as project instructions. Its project
+  `opencode.json` denies file editing and shell execution by the agent;
+  the configured local MCP process can still launch.
+- Both clients connect to the same project-local `nxwv-toolkit` MCP server.
+  There is no separate agent to select: open either client in the repository root.
+
+To use the assistant, configure `.env` from `.env.example` for the OneWeb
+service (if needed), then launch `opencode` or `claude`. You can ask questions
+such as "Check the firmware upgrade status for IMEI 350357139990004" or
+"Investigate blockage on the Intellian antenna at https://device.example".
+The latter URL is illustrative; direct Intellian queries require an accessible
+device URL and any necessary credentials available to the MCP process.
+
+Restart the client and its MCP subprocess after editing the source or `.env`;
+a running stdio server does not hot-reload changes. The agent cannot infer
+live status from historical reports or failed queries.
+
+**Security:** these are client-level instructions and OpenCode permissions,
+not a sandbox for arbitrary MCP tools. Claude Code's project instructions
+guide operational behavior but do not by themselves enforce a hard tool
+permission boundary. Keep the server read-only and restrict credentials
+to the access required for diagnostics.
 
 ## Project-local MCP for OpenCode and Claude Code
 
@@ -120,14 +151,14 @@ or token). Set that environment variable in the MCP server process environment
 before starting the client. Avoid supplying passwords or tokens directly as
 tool arguments.
 
-Example prompt: "Use intellian_oneweb_health with url https://example.com".
+Example prompt: "Check antenna health at https://example.com".
 The example URL is only for testing GET /, not a real Intellian device. A new registered
 HttpTool becomes available to both clients on the next MCP server restart.
 
 ## Intellian endpoint tools
 
 Each Intellian endpoint has its own Python file under
-`src/toolkits/intellian_oneweb/`; one HTTP GET endpoint equals one tool.
+`src/toolkits/intellian_oneweb/tools/`; one HTTP GET endpoint equals one tool.
 Each declaration selects native JSON paths without renaming them. The generic
 extractor lives in `src/core/json.py`, and `HttpTool.run()` returns the
 extracted data directly (or the full JSON/text body for tools without fields).
