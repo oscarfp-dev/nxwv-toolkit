@@ -17,8 +17,8 @@ def test_shared_operational_instructions() -> None:
     assert "read-only" in instructions
 
 
-def test_claude_imports_shared_instructions() -> None:
-    assert "@AGENTS.md" in (ROOT / "CLAUDE.md").read_text()
+def test_no_duplicate_claude_instructions() -> None:
+    assert not (ROOT / "CLAUDE.md").exists()
 
 
 def test_both_clients_use_local_mcp_entry() -> None:

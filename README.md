@@ -96,7 +96,7 @@ not edited by the assistant during routine operations.
 
 - `AGENTS.md` defines the shared operational role, tool-selection rules,
   evidence standards, read-only limits, and diagnostic response format.
-- `CLAUDE.md` imports `AGENTS.md` for Claude Code.
+- Claude Code and OpenCode use the project `AGENTS.md` directly (use a client version that supports it).
 - OpenCode reads `AGENTS.md` as project instructions. Its project
   `opencode.json` denies file editing and shell execution by the agent;
   the configured local MCP process can still launch.
