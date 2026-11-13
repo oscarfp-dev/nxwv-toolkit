@@ -18,11 +18,8 @@ def load_config() -> Config:
         raise ValueError("OPSCENTER_BASE_URL must be configured in the MCP environment")
     if not url.startswith("https://"):
         raise ValueError("OPSCENTER_BASE_URL must use HTTPS")
-    cookie_file = Path(
-        os.getenv(
-            "OPSCENTER_COOKIE_FILE", str(Path.home() / ".config/nxwv-toolkit/auth/opscenter.cookie")
-        )
-    ).expanduser()
+    default_cookie = Path(__file__).resolve().parents[3] / ".local" / "auth" / "opscenter.cookie"
+    cookie_file = Path(os.getenv("OPSCENTER_COOKIE_FILE", str(default_cookie))).expanduser()
     return Config(base_url=url, cookie_file=cookie_file)
 
 
