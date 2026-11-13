@@ -5,9 +5,9 @@ import pytest
 
 from core import HttpClient
 from mcp_server.server import mcp
-from toolkits import TOOLS
-from toolkits.intellian_oneweb.health import health
 from toolkits.intellian_oneweb.mcp import make_handler
+from toolkits.intellian_oneweb.tools import TOOLS
+from toolkits.intellian_oneweb.tools.health import health
 
 
 @pytest.mark.asyncio

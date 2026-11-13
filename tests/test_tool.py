@@ -2,7 +2,7 @@ import httpx
 import pytest
 
 from core import BasicAuth, HttpClient, HttpTool
-from toolkits.intellian_oneweb.health import health
+from toolkits.intellian_oneweb.tools.health import health
 
 
 @pytest.mark.asyncio

@@ -30,3 +30,15 @@ def test_basic_auth_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None
     _, _, auth = load_inventory(path)
     assert auth is not None
     assert auth.password == "secret"  # type: ignore[union-attr]
+
+
+def test_declarative_pipeline_uses_local_intellian_registry(tmp_path: Path) -> None:
+    path = tmp_path / "inventory.toml"
+    path.write_text(
+        '[targets]\nurls = ["https://antenna.example"]\n'
+        '[pipeline]\ntools = ["intellian_oneweb.health", "intellian_oneweb.antenna_info"]\n'
+    )
+    urls, tools, auth = load_inventory(path)
+    assert urls == ["https://antenna.example"]
+    assert tools == ["intellian_oneweb.health", "intellian_oneweb.antenna_info"]
+    assert auth is None

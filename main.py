@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 import httpx
 
 from core import BasicAuth, BearerAuth, HttpClient
-from toolkits import TOOLS
+from toolkits.intellian_oneweb.tools import TOOLS
 
 
 def load_inventory(path: Path) -> tuple[list[str], list[str], BasicAuth | BearerAuth | None]:

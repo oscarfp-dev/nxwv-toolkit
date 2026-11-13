@@ -6,7 +6,7 @@ import httpx
 import pytest
 
 from core import HttpClient
-from toolkits.oneweb_api import mcp as oneweb
+from toolkits.oneweb_api import tools as oneweb
 
 
 @pytest.mark.asyncio
