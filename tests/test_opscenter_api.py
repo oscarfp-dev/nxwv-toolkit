@@ -6,6 +6,7 @@ from typing import Any
 import httpx
 import pytest
 
+from toolkits.opscenter_api.config import load_config
 from toolkits.opscenter_api.tools import get_antenna_data, get_antenna_info
 
 
@@ -17,6 +18,13 @@ def cookie_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("OPSCENTER_COOKIE_FILE", str(path))
     monkeypatch.setenv("OPSCENTER_BASE_URL", "https://opscenter.example.test")
     return path
+
+
+def test_default_cookie_file_is_project_local(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("OPSCENTER_COOKIE_FILE", raising=False)
+    monkeypatch.setenv("OPSCENTER_BASE_URL", "https://opscenter.example.test")
+    project_root = Path(__file__).resolve().parents[1]
+    assert load_config().cookie_file == project_root / ".local" / "auth" / "opscenter.cookie"
 
 
 @pytest.mark.asyncio

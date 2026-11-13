@@ -241,17 +241,18 @@ To save the **entire Cookie request header value** copied from an authenticated
 browser request, enter it interactively in WSL:
 
 ```bash
-install -d -m 700 ~/.config/nxwv-toolkit/auth
+install -d -m 700 .local/auth
 umask 077
 read -rsp "OpsCenter Cookie header: " COOKIE; echo
-printf '%s' "$COOKIE" > ~/.config/nxwv-toolkit/auth/opscenter.cookie
+printf '%s' "$COOKIE" > .local/auth/opscenter.cookie
 unset COOKIE
-chmod 600 ~/.config/nxwv-toolkit/auth/opscenter.cookie
+chmod 600 .local/auth/opscenter.cookie
 ```
 
 The MCP reads this file on each request, so updating the cookie does not
-require restarting the server. Set `OPSCENTER_COOKIE_FILE` to use another
-private file. The tool reports authentication errors when the cookie expires;
+require restarting the server. By default the file lives at
+`.local/auth/opscenter.cookie` relative to the repository root (gitignored).
+Set `OPSCENTER_COOKIE_FILE` to use another private file. The tool reports authentication errors when the cookie expires;
 it does not automatically sign in or renew the session. Keep the file out
 of source control, logs, prompts, and shared directories.
 
