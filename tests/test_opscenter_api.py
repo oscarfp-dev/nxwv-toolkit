@@ -36,7 +36,8 @@ async def test_native_payload_and_private_cookie(
     def fake_client(**kwargs: Any) -> httpx.AsyncClient:
         assert kwargs["follow_redirects"] is False
         assert "verify" not in kwargs or kwargs["verify"] is not False
-        return original(transport=httpx.MockTransport(handler), **kwargs)
+        kwargs["transport"] = httpx.MockTransport(handler)
+        return original(**kwargs)
 
     monkeypatch.setattr(httpx, "AsyncClient", fake_client)
     tool = get_antenna_data if endpoint == "data" else get_antenna_info
@@ -53,16 +54,15 @@ async def test_expired_session_is_reported_without_redirect(
     original = httpx.AsyncClient
 
     def fake_client(**kwargs: Any) -> httpx.AsyncClient:
-        return original(
-            transport=httpx.MockTransport(
-                lambda req: httpx.Response(302, headers={"location": "https://login.example.test/"})
-            ),
-            **kwargs,
+        kwargs["transport"] = httpx.MockTransport(
+            lambda req: httpx.Response(302, headers={"location": "https://login.example.test/"})
         )
+        return original(**kwargs)
 
     monkeypatch.setattr(httpx, "AsyncClient", fake_client)
     result = await get_antenna_info("test-antenna-001")
     assert result["ok"] is False
+    assert result["status"] == 302
     assert "HTTP 302" in result["error"]
     assert "session=example" not in result["error"]
 

@@ -4,11 +4,13 @@ from typing import Any
 
 import httpx
 
+from core.response import failure, success
+
 from .client import request
 
 
 async def request_result(endpoint: str, antenna_id: str) -> dict[str, Any]:
     try:
-        return {"ok": True, "data": await request(endpoint, antenna_id)}
+        return success(await request(endpoint, antenna_id))
     except (ValueError, httpx.HTTPError) as exc:
-        return {"ok": False, "error": str(exc)}
+        return failure(exc)

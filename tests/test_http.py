@@ -75,3 +75,18 @@ async def test_http_error_propagates() -> None:
 def test_requires_http_scheme() -> None:
     with pytest.raises(ValueError):
         HttpClient("example.test")
+
+
+@pytest.mark.asyncio
+async def test_redirect_is_error_without_following() -> None:
+    calls: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls.append(request)
+        return httpx.Response(302, headers={"location": "https://login.example.test/"})
+
+    client = HttpClient("https://example.test", transport=httpx.MockTransport(handler))
+    with pytest.raises(httpx.HTTPStatusError) as exc:
+        await client.request("GET", "/status")
+    assert exc.value.response.status_code == 302
+    assert len(calls) == 1
