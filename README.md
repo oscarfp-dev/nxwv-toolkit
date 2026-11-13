@@ -181,3 +181,38 @@ The three source RAML ZIP archives are kept locally in `.local/raml/` and
 ignored by Git. No vendor specifications or sample data are committed.
 The example service URLs in `.env.example` are placeholders, not verified
 production endpoints.
+
+## OpsCenter API (Poller)
+
+Two read-only MCP tools fetch the original JSON payload, without field
+selection or schema conversion:
+
+- `opscenter_api_get_antenna_data(antenna_id)` — `GET /api/v1/antennas/data/{antenna_id}`
+- `opscenter_api_get_antenna_info(antenna_id)` — `GET /api/v1/antennas/info/{antenna_id}`
+
+The default host is `https://poller.opscenter-preprod.viasat.io`;
+override it with `OPSCENTER_BASE_URL` if necessary. Antenna IDs such as
+`Sh2Fl6` are not OneWeb IMEIs. Authentication is a manually managed
+application session cookie, **not** an Okta token. The MCP never asks
+the AI client for the cookie and never returns it in tool results.
+
+To save the **entire Cookie request header value** copied from an authenticated
+browser request, enter it interactively in WSL:
+
+```bash
+install -d -m 700 ~/.config/nxwv-toolkit/auth
+umask 077
+read -rsp "OpsCenter Cookie header: " COOKIE; echo
+printf '%s' "$COOKIE" > ~/.config/nxwv-toolkit/auth/opscenter.cookie
+unset COOKIE
+chmod 600 ~/.config/nxwv-toolkit/auth/opscenter.cookie
+```
+
+The MCP reads this file on each request, so updating the cookie does not
+require restarting the server. Set `OPSCENTER_COOKIE_FILE` to use another
+private file. The tool reports authentication errors when the cookie expires;
+it does not automatically sign in or renew the session. Keep the file out
+of source control, logs, prompts, and shared directories.
+
+TLS verification remains enabled. WSL must trust the corporate root CA;
+do not use `curl -k` or `verify=False` as a permanent workaround.

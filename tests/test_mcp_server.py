@@ -23,6 +23,8 @@ async def test_mcp_registered_tools() -> None:
             "oneweb_api_reboot_status",
             "oneweb_api_mute_status",
             "oneweb_api_performance_report",
+            "opscenter_api_get_antenna_data",
+            "opscenter_api_get_antenna_info",
         }
     )
 
