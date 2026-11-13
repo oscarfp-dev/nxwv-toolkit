@@ -184,7 +184,8 @@ production endpoints.
 
 ## OpsCenter API (Poller)
 
-Two read-only MCP tools fetch the original JSON payload, without field
+Two read-only MCP tools (one module per endpoint under
+`src/toolkits/opscenter_api/tools/`) fetch the original JSON payload, without field
 selection or schema conversion:
 
 - `opscenter_api_get_antenna_data(antenna_id)` — `GET /api/v1/antennas/data/{antenna_id}`
