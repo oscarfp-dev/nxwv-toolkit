@@ -90,3 +90,14 @@ async def test_redirect_is_error_without_following() -> None:
         await client.request("GET", "/status")
     assert exc.value.response.status_code == 302
     assert len(calls) == 1
+
+
+@pytest.mark.asyncio
+async def test_redirect_rejected_without_location() -> None:
+    client = HttpClient(
+        "https://example.test",
+        transport=httpx.MockTransport(lambda _: httpx.Response(307)),
+    )
+    with pytest.raises(httpx.HTTPStatusError) as exc:
+        await client.request("GET", "/status")
+    assert exc.value.response.status_code == 307

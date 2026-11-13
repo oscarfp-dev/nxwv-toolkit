@@ -14,6 +14,9 @@ def test_shared_operational_instructions() -> None:
     assert "not" in instructions and "software developer" in instructions
     assert "oneweb_api_*" in instructions
     assert "intellian_oneweb_*" in instructions
+    assert "opscenter_api_get_antenna_data" in instructions
+    assert "opscenter_api_get_antenna_info" in instructions
+    assert "not for agent-driven development" in instructions
     assert "read-only" in instructions
 
 
@@ -45,4 +48,6 @@ def test_both_clients_use_local_mcp_entry() -> None:
 
 
 async def test_operational_mcp_tool_count() -> None:
-    assert len(await mcp.list_tools()) == 17
+    names = {tool.name for tool in await mcp.list_tools()}
+    assert len(names) == 19
+    assert {"opscenter_api_get_antenna_data", "opscenter_api_get_antenna_info"} <= names
