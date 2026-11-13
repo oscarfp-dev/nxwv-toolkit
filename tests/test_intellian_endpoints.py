@@ -5,7 +5,7 @@ import pytest
 
 from core import HttpClient
 from core.json import extract_fields
-from toolkits import TOOLS
+from toolkits.intellian_oneweb.tools import TOOLS
 
 EXPECTED = {
     "antenna_info": "/api/antenna/antennainfo",

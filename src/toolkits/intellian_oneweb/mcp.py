@@ -6,7 +6,8 @@ import httpx
 from mcp.server.fastmcp import FastMCP
 
 from core import BasicAuth, BearerAuth, HttpClient, HttpTool
-from toolkits import TOOLS
+
+from .tools import TOOLS
 
 
 def make_handler(tool: HttpTool):
