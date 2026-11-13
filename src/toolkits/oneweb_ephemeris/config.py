@@ -15,7 +15,7 @@ class Config:
 
 
 def load_config() -> Config:
-    default = Path.home() / ".local/share/nxwv-toolkit/ephemeris"
+    default = Path(__file__).resolve().parents[3] / ".local" / "ephemeris"
     directory = Path(os.getenv("ONEWEB_EPHEMERIS_DIR", str(default))).expanduser()
     source_url = os.getenv("ONEWEB_EPHEMERIS_URL", "").strip()
     parsed = urlsplit(source_url)

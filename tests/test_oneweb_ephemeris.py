@@ -6,6 +6,7 @@ from typing import Any
 import httpx
 import pytest
 
+from toolkits.oneweb_ephemeris.config import load_config
 from toolkits.oneweb_ephemeris.tools import download_ltef, get_ltef_status
 
 
@@ -14,6 +15,13 @@ def directory(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("ONEWEB_EPHEMERIS_DIR", str(tmp_path))
     monkeypatch.setenv("ONEWEB_EPHEMERIS_URL", "https://example.test/ltef/ltef.csv")
     return tmp_path
+
+
+def test_default_directory_is_project_local(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("ONEWEB_EPHEMERIS_DIR", raising=False)
+    monkeypatch.setenv("ONEWEB_EPHEMERIS_URL", "https://example.test/ltef/ltef.csv")
+    project_root = Path(__file__).resolve().parents[1]
+    assert load_config().directory == project_root / ".local" / "ephemeris"
 
 
 def test_missing(directory: Path) -> None:
