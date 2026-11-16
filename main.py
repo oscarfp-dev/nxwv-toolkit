@@ -17,7 +17,7 @@ from core import BasicAuth, BearerAuth, HttpClient
 from toolkits.intellian_oneweb.tools import TOOLS
 
 
-def load_inventory(path: Path) -> tuple[list[str], list[str], BasicAuth | BearerAuth | None]:
+def load_inventory(path: Path) -> tuple[list[str], list[str], BasicAuth | BearerAuth | None, bool]:
     with path.open("rb") as file:
         config = tomllib.load(file)
 
@@ -45,7 +45,13 @@ def load_inventory(path: Path) -> tuple[list[str], list[str], BasicAuth | Bearer
         auth = BearerAuth(_secret(auth_config["token_env"]))
     elif auth_type != "none":
         raise ValueError(f"Unsupported auth type: {auth_type}")
-    return cast(list[str], targets), cast(list[str], tools), auth
+    transport_config: object = config.get("transport", {})
+    if not isinstance(transport_config, dict):
+        raise ValueError("transport must be a TOML table")
+    verify_tls: object = cast(dict[str, object], transport_config).get("verify_tls", True)
+    if not isinstance(verify_tls, bool):
+        raise ValueError("transport.verify_tls must be a boolean")
+    return cast(list[str], targets), cast(list[str], tools), auth, verify_tls
 
 
 def _secret(name: str) -> str:
@@ -56,11 +62,11 @@ def _secret(name: str) -> str:
 
 
 async def run_inventory(
-    urls: list[str], tools: list[str], auth: BasicAuth | BearerAuth | None
+    urls: list[str], tools: list[str], auth: BasicAuth | BearerAuth | None, verify_tls: bool = True
 ) -> bool:
     failed = False
     for url in urls:
-        client = HttpClient(url, auth=auth)
+        client = HttpClient(url, auth=auth, verify=verify_tls)
         for name in tools:
             try:
                 data = await TOOLS[name].run(client)
@@ -77,7 +83,7 @@ async def run_inventory(
                     "tool": name,
                     "ok": False,
                     "status": exc.response.status_code,
-                    "error": str(exc),
+                    "error": str(exc) or repr(exc),
                 }
             except httpx.RequestError as exc:
                 failed = True
@@ -86,7 +92,7 @@ async def run_inventory(
                     "tool": name,
                     "ok": False,
                     "status": None,
-                    "error": str(exc),
+                    "error": str(exc) or repr(exc),
                 }
             print(json.dumps(result, ensure_ascii=False))
     return not failed
@@ -97,11 +103,11 @@ def main() -> int:
     parser.add_argument("inventory", type=Path, help="Path to the TOML inventory")
     args = parser.parse_args()
     try:
-        urls, tools, auth = load_inventory(args.inventory)
+        urls, tools, auth, verify_tls = load_inventory(args.inventory)
     except (OSError, KeyError, TypeError, ValueError, tomllib.TOMLDecodeError) as exc:
         print(f"Invalid inventory: {exc}", file=sys.stderr)
         return 2
-    return 0 if asyncio.run(run_inventory(urls, tools, auth)) else 1
+    return 0 if asyncio.run(run_inventory(urls, tools, auth, verify_tls)) else 1
 
 
 if __name__ == "__main__":

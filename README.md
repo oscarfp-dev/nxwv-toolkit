@@ -92,6 +92,21 @@ tools = ["intellian_oneweb.health"]
 uv run python main.py inventory.example.toml
 ```
 
+The inventory pipeline verifies HTTPS certificates by default. For trusted
+internal antennas using self-signed certificates, add the following to your
+local `inventory.toml`:
+
+```toml
+[transport]
+verify_tls = false
+```
+
+This applies to all targets in that inventory. HTTPS remains encrypted, but
+server identity is no longer authenticated, which increases man-in-the-middle
+risk. Use only for known internal devices on trusted networks; prefer installing
+the device CA when possible. This setting does not change TLS verification
+for the MCP tools, OneWeb API, or OpsCenter API.
+
 An optional shared `[auth]` section supports `type = "basic"` with
 `username` and `password_env`, or `type = "bearer"` with `token_env`.
 Secrets are read from environment variables. Tools must be explicitly registered
