@@ -1,3 +1,6 @@
+[toolkit]
+name = "intellian_oneweb"
+
 # Every tool runs against every URL, in the order listed.
 # example.com is used only to demonstrate execution, not as an Intellian device.
 [targets]

@@ -75,7 +75,7 @@ print(data)
 
 The Intellian health tool requests GET /, as specified for this device.
 
-## Run a TOML pipeline
+## Run a toolkit-specific TOML inventory
 
 `inventory.example.toml` lists URLs and tools. Every tool runs against every URL,
 in the order listed:
@@ -91,6 +91,21 @@ tools = ["intellian_oneweb.health"]
 ```bash
 uv run python main.py inventory.example.toml
 ```
+
+Other toolkits have independent TOML schemas, without mandatory URL targets:
+
+- `inventory.oneweb-api.example.toml`: `[targets].imeis` and optional
+  `[parameters.<tool_name>]` for custom tool arguments. Listing terminals can
+  run without targets, using its filters alone.
+- `inventory.opscenter.example.toml`: `[targets].antenna_ids`, with the
+  existing private OpsCenter cookie configuration.
+- `inventory.ephemeris.example.toml`: no targets; status is local and
+  downloading refreshes the LTEF snapshot.
+
+Run each with `uv run python main.py <inventory-file>`. Toolkit service URLs,
+credentials and storage settings remain in environment variables / project
+`.env`, not in TOML. The router loads project `.env` for manual runs.
+Legacy Intellian inventories without `[toolkit]` are still supported.
 
 The inventory pipeline verifies HTTPS certificates by default. For trusted
 internal antennas using self-signed certificates, add the following to your

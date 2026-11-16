@@ -1,0 +1,7 @@
+# Requires ONEWEB_EPHEMERIS_URL in .env.
+[toolkit]
+name = "oneweb_ephemeris"
+
+[pipeline]
+tools = ["get_ltef_status"]
+# Add "download_ltef" to refresh the local snapshot.

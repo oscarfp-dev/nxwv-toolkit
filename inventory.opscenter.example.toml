@@ -1,0 +1,9 @@
+# URL and private cookie from .env.
+[toolkit]
+name = "opscenter_api"
+
+[targets]
+antenna_ids = ["example_antenna"]
+
+[pipeline]
+tools = ["get_antenna_info", "get_antenna_data"]

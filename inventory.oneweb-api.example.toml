@@ -1,0 +1,12 @@
+# Service URLs and credentials from .env.
+[toolkit]
+name = "oneweb_api"
+
+[targets]
+imeis = ["123456789012345"]
+
+[pipeline]
+tools = ["get_user_terminal", "upgrade_status"]
+
+[parameters.get_user_terminal]
+fields = "imei"
