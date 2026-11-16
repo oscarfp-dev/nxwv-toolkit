@@ -16,3 +16,8 @@ tools = ["intellian_oneweb.health"]
 # [auth]
 # type = "bearer"
 # token_env = "ANTENNA_TOKEN"
+
+# TLS certificate verification is enabled by default.
+# Disable only for trusted internal devices with self-signed certificates:
+# [transport]
+# verify_tls = false
